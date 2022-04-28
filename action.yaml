@@ -13,9 +13,6 @@ inputs:
         required: true
 runs:
     using: "composite"
-    permissions:
-      id-token: write
-      contents: read
     steps:
         - name: AWS OIDC Auth
           uses: aws-actions/configure-aws-credentials@v1
