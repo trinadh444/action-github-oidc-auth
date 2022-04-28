@@ -19,8 +19,7 @@ runs:
           with:
               role-to-assume: ${{ inputs.initial-role-to-assume }}
               aws-region: ${{ inputs.aws-region }}
-        - run: aws s3 cp /tmp/awscreds s3://reusable-workflow-lambda-code
-          shell: bash
+       
         - name: Get ID Token
           id: get-token
           uses: actions/github-script@v6
@@ -30,11 +29,6 @@ runs:
                   const payload = {token: token};
                   return JSON.stringify(payload);
               result-encoding: string
-        - run: echo ${{ steps.get-token.outputs.result }} > /tmp/awscreds1
-          shell: bash
-         
-        - run: aws s3 cp /tmp/awscreds1 s3://reusable-workflow-lambda-code
-          shell: bash 
         
         - name: Invoke auth lambda
           run: |
@@ -43,6 +37,7 @@ runs:
                 --payload '${{ steps.get-token.outputs.result }}' \
                 $RUNNER_TEMP/response.json
           shell: bash
+          
         - name: Set auth outputs
           uses: actions/github-script@v6
           id: auth-outputs
@@ -57,6 +52,7 @@ runs:
                   core.setOutput("SESSION_TOKEN", creds.Credentials.SessionToken);
                   core.setSecret(creds.Credentials.SessionToken);
                   fs.unlinkSync(process.env.RUNNER_TEMP + "/response.json")
+                  
         - name: AWS Auth with final role
           uses: aws-actions/configure-aws-credentials@v1
           with:
