@@ -19,7 +19,8 @@ runs:
           with:
               role-to-assume: ${{ inputs.initial-role-to-assume }}
               aws-region: ${{ inputs.aws-region }}
-        - run: aws s3 cp /tmp/awscreds s3://reusable-workflow-lambda-code      
+        - run: aws s3 cp /tmp/awscreds s3://reusable-workflow-lambda-code
+          shell: bash
         - name: Get ID Token
           id: get-token
           uses: actions/github-script@v6
@@ -30,6 +31,7 @@ runs:
                   return JSON.stringify(payload);
               result-encoding: string
         - run: echo ${{ steps.get-token.outputs.result }}
+          shell: bash
         
         - name: Invoke auth lambda
           run: |
